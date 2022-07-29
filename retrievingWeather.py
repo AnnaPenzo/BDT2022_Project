@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 21 11:39:52 2022
-
-@author: annapenzo
-"""
 
 import sqlite3
 
