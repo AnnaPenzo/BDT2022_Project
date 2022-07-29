@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jun 19 11:32:30 2022
-
-@author: annapenzo
-"""
-
 
 import requests
 import math
@@ -16,8 +8,6 @@ city_name = "Milan,IT"
 api_key = "bcbd3c98dce9c884ca136388c89d3073"
 
 
-
-#%%
 conn = sqlite3.connect('meteo.db')
 cursor = conn.cursor()
 cursor.execute('''CREATE TABLE weather (
@@ -29,7 +19,7 @@ cursor.execute('''CREATE TABLE weather (
     feels_like INTEGER,
     humidity INTEGER,
     wind_speed REAL)''')
-#%%
+
 
 def get_weather(api_key, city_name):
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city_name}&&appid={api_key}"
