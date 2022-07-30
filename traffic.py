@@ -42,6 +42,7 @@ cursor.execute('''CREATE TABLE traffic_table (
     lon TEXT,
     length TEXT,
     actual_speed FLOAT,
+    uncapped_speed FLOAT,
     free_flow speed FLOAT,
     jam_factor FLOAT,
     traversability TEXT)''')
@@ -62,6 +63,7 @@ def get_traffic():
     lon = []
     length = []
     currentSpeed = []
+    uncappedSpeed = []
     freeFlowSpeed = []
     jamFactor = []
     traversability = []
@@ -89,8 +91,9 @@ def get_traffic():
                 lngs.append(lg)
 
         fcF = res['currentFlow']
-        if ('speed' in fcF.keys()) and ('freeFlow' in fcF.keys()) and ('traversability' in fcF.keys()) and ('jamFactor' in fcF.keys()):
+        if ('speed' in fcF.keys()) and ('speedUncapped' in fcF.keys()) and ('freeFlow' in fcF.keys()) and ('traversability' in fcF.keys()) and ('jamFactor' in fcF.keys()):
             act_sp = float(fcF['speed']*3.6)
+            unc_sp = float(fcF['speedUncapped']*3.6)
             ff_sp = float(fcF['freeFlow']*3.6)
             jam_f = float(fcF['jamFactor'])
             travers = str(fcF['traversability'])
@@ -100,13 +103,14 @@ def get_traffic():
         location.append(loc_name)
         length.append(loc_len)
         currentSpeed.append(act_sp)
+        uncappedSpeed.append(unc_sp)
         freeFlowSpeed.append(ff_sp)
         jamFactor.append(jam_f)
         traversability.append(travers)
         lat.append(lats)
         lon.append(lngs)
 
-    def_traffic = pd.DataFrame(list(zip(location, length, lat, lon, currentSpeed, freeFlowSpeed, jamFactor, traversability)), columns=['name', 'length', 'lat', 'lon', 'actual_speed', 'free_flow_speed', 'jam_factor', 'traversability'])
+    def_traffic = pd.DataFrame(list(zip(location, length, lat, lon, currentSpeed, uncappedSpeed, freeFlowSpeed, jamFactor, traversability)), columns=['name', 'length', 'lat', 'lon', 'actual_speed', 'uncapped_speed', 'free_flow_speed', 'jam_factor', 'traversability'])
 
     # Adding the 'date_time' column
     def_traffic['date_time'] = datetime_traffic
@@ -117,7 +121,7 @@ def get_traffic():
     traffic_def = pd.concat((jam_norm, redef_traffic), 1)
 
     # Reordering the dataframe
-    traffic_def = traffic_def[['date_time', 'name', 'length', 'lat', 'lon', 'actual_speed', 'free_flow_speed', 'jam_factor', 'traversability']]
+    traffic_def = traffic_def[['date_time', 'name', 'length', 'lat', 'lon', 'actual_speed', 'uncapped_speed', 'free_flow_speed', 'jam_factor', 'traversability']]
 
     return traffic_def
 
@@ -134,11 +138,19 @@ while True:
         ("lat", repr(new_row[3])),
         ("lon", repr(new_row[4])),
         ("actual_speed", new_row[5]),
-        ("free_flow_speed", new_row[6]),
-        ("jam_factor", new_row[7]),
-        ("traversability", new_row[8])]
-        cursor.execute('INSERT INTO traffic_table VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', list(map(lambda x: x[1], flow)))
+        ("uncapped_speed", new_row[6]),
+        ("free_flow_speed", new_row[7]),
+        ("jam_factor", new_row[8]),
+        ("traversability", new_row[9])]
+        cursor.execute('INSERT INTO traffic_table VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', list(map(lambda x: x[1], flow)))
 
     now = datetime.now()
     print(traffic_df.head())
     print(f'Last update: {now}')
+    conn.commit()
+    t.sleep(3600)
+    
+    
+# Closing the connection
+
+conn.close()
