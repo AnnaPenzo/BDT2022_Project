@@ -16,5 +16,15 @@ The same is also reletable to the weather data. This provides the hourly situati
 For what concerns the traffic flow data, after having examined different sources - specifically, we look at the TomTom's Traffic APIs, at the Google Maps API, and at the OpenStreetMap data - we ended up fetching the Here Traffic API due to their greater accessibility and completeness. As a matter of fact, most of the other options only offer static information and, mostly, no clue about actual traffic flows.
 On the contrary, the Here Traffic API (in their seventh version) provides different options to gather the actual mean speed of the vehicles for each city street, and thus a clever way to compute the traffic status.
 Moreover, the Here Traffic API offer several options for the setting of parameters like the geographical boundaries or the zoom.
+As specified on their website, *"the HERE Traffic API v7 is a REST API that provides real-time traffic flow and incident information".* In particular, regarding the traffic flow information, it *"provides access to real-time traffic flow data in JSON, including information on speed and jam factor for the region(s) defined in each request. The Traffic API v7 can also deliver additional data such as the geometry of the road segments in relation to the flow".*
+Also, *"the response from the flow endpoint provides a list of flow objects together with the last updated time of the source data. Each flow object consists of a location field containing a location reference and a currentFlow field describing the current traffic conditions [...]. A current flow object contains 3 speed values:
+
+- freeFlow - the reference speed along the roadway when no traffic is present
+
+- speed - the expected speed along the roadway; will not exceed the legal speed limit
+
+- speedUncapped - the expected speed along the roadway; may exceed the legal speed limit
+
+For our purposes, as we're more interested in the traffic conditions we decided to not store the speedUncapped; indeed, the traffic status can ????????????
 
 ## Getting the historical data
