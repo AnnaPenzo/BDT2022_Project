@@ -11,7 +11,7 @@ Finally, we decide to provide also some suggestions about how to retrieve and ev
 About this last point, unfortunately we cannot offer nice comparisons and relationships between the historical and the real-time data because of the time lag - since the historical data are mostly yearly-based whereas the real-time data have been collected on an hourly basis.
 
 ## Getting the real-time data
-About real-time data, as anticipated, we include in our big data system two different solutions, one about traffic flow and one about weather. The real-time data about traffic flows can obviously be used to create a big database where each street is associated to the expected speed of the vehicles and the actually-registered speed (in fact, the ration between these two information provides the traffic situation), and the variations of these parameters could be compared along time.
+About real-time data, as anticipated, we include in our big data system two different solutions, one about traffic flow and one about weather. The real-time data about traffic flows can obviously be used to create a big database where each street is associated to the expected speed of the vehicles and the actually-registered speed (in fact, the ratio between these two information provides the traffic situation), and the variations of these parameters could be compared along time.
 The same is also reletable to the weather data. This provides the hourly situation of several weather parameters (temperature, wind, humidity, and so on) about the city of Milan, and they can be easily used to collect an historical series that can then be compared and related to the traffic flow information - and also, hypothetically, to the historical use of the transportation means if those data would come in a smaller time raster.
 
 For what concerns the traffic flow data, after having examined different sources - specifically, we look at the TomTom's Traffic APIs, at the Google Maps API, and at the OpenStreetMap data - we ended up fetching the Here Traffic API due to their greater accessibility and completeness. As a matter of fact, most of the other options only offer static information and, mostly, no clue about actual traffic flows.
@@ -29,6 +29,8 @@ Also, *"the response from the flow endpoint provides a list of flow objects toge
 While the first two values allow us to compute the traffic status of a specific street - since the ratio between the actual speed and the expected speed when there's no traffic describes the difference between the current situation and the ideal one -, the third could be useful from a regulatory point of view, as it could be exploited to monitor the maximal speed reached in each street and, eventually, impose some speed limits.
 Ultimately, the traffic real-time data are collected fetching the Here Traffic API once an hour, and then stored in a SQL database table with the following fields: *'date_time', 'name', 'length', 'lat', 'lon', 'actual_speed', 'uncapped_speed', 'free_flow_speed', 'jam_factor', 'traversability'*.
 
+AGGIUNGERE COMMENTO IN MERITO ALLA POSSIBILITÀ DI OTTENERE DATI SUGLI INCIDENTI
+
 For what concerns the weather real-time data, we decided to fetch them from the OpenWeather API. The data provided by the service represent a valid help for working with weather data and timely tracking dangerous phenomena because of the huge amount of information stored and the ease in accessing and using them.  
 The website provides a variety of options, and we chose to work with the Current Weather Data contained in the Current & Forecast weather data collection. As specified on the website, the objective of such data collection is to provide access to current weather data for any location on Earth including over 200,000 cities. The collection and processing of weather data is done by using different sources such as global and local weather models, satellites, radars and a vast network of weather stations. Data is available in JSON, XML, or HTML format.
 
@@ -36,9 +38,30 @@ For the purpose of the project, we decided to consider just a subset of the whol
 
 As for the traffic real-time data, we used the OpenWeather API to fetch the data once per hour, and then stored them in a different SQL database table with the following fields: *'date_time', 'weather', 'temperature', 'temp_min', 'temp_max', 'feels_like', 'humidity', 'wind_speed'*.
 
+In order to retrieve a relevant amount of data, and above all to replicate what the real fetching-data process would be, we decided to rely on eu.pythonanywhere.com, a web service that offers, in their words, *access to machines with a full Python environment already installed*, where users can freely *develop and host your website or any other code directly from your browser without having to install software or manage your own server.*
+More specifically, *PythonAnywhere makes it easy to create and run Python programs in the cloud. You can write your programs in a web-based editor or just run a console session from any modern web browser. There's storage space on our servers, and you can preserve your session state and access it from anywhere, with no need to pay for, or configure, your own server*.
+For our simple purposes, this is a great solution. But of course, this is because all our code is in Python, and we did not need a service that would have allowed us to run scripts with different programming languages.
+Furthermore, PythonAnywhere offers a beginner plan that is completely free - and actually enough for the work we needed for the weather real-time data -, but provides also several solutions to upgrade the power of one's account up to 20 hourly or daily scheduled tasks, 100.000 CPU-seconds per day for consoles, and as much disk space as needed. The upgrades are also customizable, and this is exactly the option we chose to run the script for fetching the traffic real-time data (the problem with this was not with the machine, but with the fact that the free beginner plan whitelisted only a limited number of sites, among which the one for the Here Traffic API is not included).
+By the way, this shows how easily scalable this service is, and this because *PythonAnywhere runs on super-powerful servers hosted by Amazon EC2, and you can take full advantage of that. Without paying a penny, you can run simple Python programs to help you explore your ideas. For heavy-duty processing, you only pay for what you use, so you can get access to teraflops of power without needing to explain yourself to the electricity company*.
+Finally, a non-negligible plus of PythonAnywhere is the super-intuitive graphical user interface which enables you to readily organize your consoles/files/web apps and manage scripts and data.
+For all these reasons, we decided to pick this option to run our data-collection scripts and let them fetch real-time data while our PCs were turned off.
+
 ## Getting the historical data
 The need for historical data comes from the unavailability of real-time data about the public transport system for the city of Milan. Luckily, the city has a large amount of historical data (most of them updated with irregular frequency) on its portal at https://dati.comune.milano.it/, and many of them are about transportation.
-Among all the ones available, we decided to select only the ones that appear to provide the most valuable information, and the ones that are more related with the purpose of our project.
+Among all the ones available, we decided to select only the ones that appear to provide the most valuable information, and those that are more related with the purpose of our project.
 Accordingly, we selected 44 datasets about transportation (mainly), viability, population and air (another factor that could and should be considered by agencies when drafting policies), but many others could have been included.
-Then, we suggest two solutions for retrieving them: the first one is to store each dataset as a SQL database table, so to having them at disposal for analyses and visualizations; the second one is about storing in a SQL database table all the links to the datasets, and then query the database when that particular link is needed.
+Then, we suggest two solutions for retrieving them: the first one is to store each dataset as a SQL database table, so having them at disposal for analyses and visualizations; the second one is about storing in a SQL database table all the links to the datasets, and then query the database when that particular link - and thus the corresponding dataset - is needed.
 Both the solutions are viable, but the latter is probably preferable since the datasets are updated with irregular frequency, and this option allows to retrieve always the most recent ones; on the other hand, retrieving and storing the datasets could lead some analysis to be based on old data, specially if they are applied some time after the data retrieval.
+
+For this part of the project we rely only on our PCs, since there was no need for non-stop operations. Indeed, the data has been stored once (in both the suggested ways) and then can be easily retrieved whenever the user need it. 
+
+Differently from what has been done for real-time data, in this case we did not provide any hint for visualizing the data, basically because this is not the main scope of the project (and we already provided some solution regarding the real-time data), but also because this data comes on a yearly basis that hardly goes with the time basis of the real-time data collected.
+Obviously, more options in this regard will be available once real-time data is gathered for longer, or if new historical data will be collected by the city of Milan on a shorter time scale.
+
+## What we would have done with a real big data project
+
+
+
+
+
+
