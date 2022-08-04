@@ -47,6 +47,9 @@ By the way, this shows how easily scalable this service is, and this because *Py
 Finally, a non-negligible plus of PythonAnywhere is the super-intuitive graphical user interface which enables you to readily organize your consoles/files/web apps and manage scripts and data.
 For all these reasons, we decided to pick this option to run our data-collection scripts and let them fetch real-time data while our PCs were turned off.
 
+A noteworthy alternative to PythonAnywhere is Deepnote, another web service that offers several features for running code and storing data in the cloud. We're mentioning it because we actually made some trials with it before switching definitely to PythonAnywhere. Deepnote has a very intuitive gui that makes replicating and running notebooks extremely easy, and since that happens on a machine in the cloud they keep running even if you close your browser.
+Unfortunately, projects' hardwares on Deepnote are turned off when there are *no changes to the code or any execution for at least 15 minutes*, and this maximum idle time is customizable only for projects with a Pro plan or higher (which, obviously, require a monthly fee); therefore we opted for PythonAnywhere.
+
 ## Getting the historical data
 The need for historical data comes from the unavailability of real-time data about the public transport system for the city of Milan. Luckily, the city has a large amount of historical data (most of them updated with irregular frequency) on its portal at https://dati.comune.milano.it/, and many of them are about transportation.
 Among all the ones available, we decided to select only the ones that appear to provide the most valuable information, and those that are more related with the purpose of our project.
