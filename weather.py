@@ -5,7 +5,7 @@ import sqlite3
 import time
 
 city_name = "Milan,IT"
-api_key = "bcbd3c98dce9c884ca136388c89d3073"
+api_key = "*****"
 
 
 conn = sqlite3.connect('meteo.db')
